@@ -19,7 +19,7 @@ def home():
 def fetch_news():  # put application's code here
     tr.get_content()
     dekd.get_content()
-    sanook.get_content()
+    # sanook.get_content()
     collection = get_database()
     collection.find().sort('public_date',-1)
     return 'news have been store in database'  # return http response or json {message: }
@@ -34,6 +34,8 @@ def fetch_inter_news():
     all_articles = newsapi.get_everything(q=topic,
                                           from_param=time,
                                           language='en',
+                                          page_size=5,
+                                          page=1,
                                           sort_by='relevancy')
     # readable_news = json.dumps(all_articles,indent=4)
 
@@ -61,7 +63,7 @@ def fetch_inter_news():
     collection = get_database()
     collection.find().sort('public_date', -1)
     # return http response or json {message: }
-    return news_format  # return http response or json {message: }
+    return 'added news successfully'# return http response or json {message: }
 
 
 if __name__ == '__main__':
