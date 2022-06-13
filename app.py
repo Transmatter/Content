@@ -20,6 +20,8 @@ def fetch_news():  # put application's code here
     tr.get_content()
     dekd.get_content()
     sanook.get_content()
+    collection = get_database()
+    collection.find().sort('public_date',-1)
     return 'news have been store in database'  # return http response or json {message: }
 
 
@@ -56,6 +58,9 @@ def fetch_inter_news():
                 i = 1
         news_format["public_date"] = time
         insert_database(news_format)
+    collection = get_database()
+    collection.find().sort('public_date', -1)
+    # return http response or json {message: }
     return news_format  # return http response or json {message: }
 
 
