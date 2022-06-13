@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from newsapi import NewsApiClient
+from Database.database import insert_database, get_database
 import json
 import Controller.Thairath as tr
 import Controller.dekd as dekd
@@ -19,7 +20,7 @@ def fetch_news():  # put application's code here
     tr.get_content()
     dekd.get_content()
     sanook.get_content()
-    return 'news have been store in database'
+    return 'news have been store in database'  # return http response or json {message: }
 
 
 @app.route('/InterNews', methods=['GET'])
@@ -32,10 +33,30 @@ def fetch_inter_news():
                                           from_param=time,
                                           language='en',
                                           sort_by='relevancy')
-    readable_news = json.dumps(all_articles,indent=4)
-    print(readable_news)
-    print(type(readable_news))
-    return readable_news
+    # readable_news = json.dumps(all_articles,indent=4)
+
+    articles = all_articles['articles']
+    news_format = {}
+    print(articles)
+    for article in articles:
+
+        news_format = {'source': article['source']['name'], 'type': 'random ', 'title': article['title'],
+                       'public_date': article['publishedAt'], 'content': article['content'],
+                       'images': [{'alt':'','url':article['urlToImage']}],
+                       'author': article['author'], 'url': article['url']}
+
+        date = news_format["public_date"]
+        time = ''
+        i = 0
+        for d in date:
+            if not d.isalpha():
+                time += d
+            elif i == 0:
+                time += ' '
+                i = 1
+        news_format["public_date"] = time
+        insert_database(news_format)
+    return news_format  # return http response or json {message: }
 
 
 if __name__ == '__main__':
