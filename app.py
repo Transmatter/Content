@@ -1,3 +1,4 @@
+import pymongo
 from flask import Flask
 from flask import request
 from newsapi import NewsApiClient
@@ -21,7 +22,7 @@ def fetch_news():  # put application's code here
     dekd.get_content()
     # sanook.get_content()
     collection = get_database()
-    collection.find().sort('public_date',-1)
+    collection.find({}).sort("public_date" ,-1 )
     return 'news have been store in database'  # return http response or json {message: }
 
 
