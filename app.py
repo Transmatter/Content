@@ -17,7 +17,7 @@ def home():
 
 
 @app.route('/LocalNews')
-def fetch_news():  # put application's code here
+def fetch_local_news():  # put application's code here
     tr.get_content()
     dekd.get_content()
     # sanook.get_content()
