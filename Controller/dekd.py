@@ -4,7 +4,7 @@ from selenium.common.exceptions import WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime, timedelta
 from Database.database import insert_database
-
+from service.forming_data_service import forming_data
 
 def format_time(incorrect_date):
     check_time = incorrect_date.split()
@@ -31,32 +31,27 @@ def format_time(incorrect_date):
         check_time[4] += ":00"
         correct_date = check_time[2]+'-'+check_time[1]+'-'+check_time[0]+' '+check_time[4]
         return correct_date
-    else:
+    elif 'ชั่วโมง' in check_time:
         time = check_time[1]
-        if 'ชั่วโมง' in check_time:
-            d = datetime.today() - timedelta(hours=int(time))
-            correct_date = d.strftime('%Y-%m-%d %H:%M:%S')
-            return correct_date
-        else:
-            d = datetime.today() - timedelta(minutes=int(time))
-            correct_date = d.strftime('%Y-%m-%d %H:%M:%S')
-            return correct_date
+        d = datetime.today() - timedelta(hours=int(time))
+        correct_date = d.strftime('%Y-%m-%d %H:%M:%S')
+        return correct_date
+    elif 'นาที' in check_time:
+        time = check_time[1]
+        d = datetime.today() - timedelta(minutes=int(time))
+        correct_date = d.strftime('%Y-%m-%d %H:%M:%S')
+        return correct_date
+    else:
+        return incorrect_date
 
-def forming_data():
-    url = 'https://www.dek-d.com/loveroom/'
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver.get(url)
-    html_page = BeautifulSoup(driver.page_source, 'html.parser')
-    driver.close()
-    return html_page
+
 
 
 def get_content():
-    html_page = forming_data()
+    html_page = forming_data('https://www.dek-d.com/loveroom/')
     thread = html_page.find('section', {'id': 'loveroom_teen_tabmenu'}).find_next('div').find_all('a')
     store_url = []
     title = []
-    content = []
     for i, s in enumerate(thread):
         store_url.append('https://www.dek-d.com' + s['href'])
         title.append(s['title'])
@@ -101,7 +96,7 @@ def get_content():
                             image.append(image_detail)
                     temp_com = {'content': each_comment.find('div', {'class': "comment-text"}).get_text(strip=True),
                                 'author': each_comment.find('a', {'class': "alias-name"}).get_text(strip=True),
-                                'time': each_comment.find('span', {'class': "time"}).get_text(strip=True),
+                                'time': format_time(each_comment.find('span', {'class': "time"}).get_text(strip=True)),
                                 'images': image
                                 }
                     content['comment'].append(temp_com)

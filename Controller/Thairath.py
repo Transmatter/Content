@@ -4,32 +4,26 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
-
+from service.forming_data_service import forming_data
 
 # from Database.database import insert_database
 
 
-def forming_data():
-    url = 'https://www.thairath.co.th/business'
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver.get(url)
-    html_page = BeautifulSoup(driver.page_source, 'html.parser')
-    driver.close()
-    return html_page
-
-
-def get_content():
-    html_page = forming_data()
+def get_thairath_content():
+    html_page = forming_data('https://www.thairath.co.th/business')
     invest_news = html_page.find('h2', text='การลงทุน').find_next('div').find_all('a')
     policy_news =  html_page.find('h2', text='เศรษฐกิจ-นโยบาย').find_next('div').find_all('a')
     marketing_news = html_page.find('h2', text='การตลาด-ธุรกิจ').find_next('div').find_all('a')
     finance_news = html_page.find('h2', text='การเงิน การธนาคาร').find_next('div').find_all('a')
     analysis_news = html_page.find('h2', text='บทวิเคราะห์เศรษฐกิจ').find_next('div').find_all('a')
-    fetch_news(invest_news, 'การลงทุน')
-    fetch_news(policy_news, 'นโยบาย')
-    fetch_news(marketing_news, 'การตลาด')
-    fetch_news(finance_news, 'การเงิน')
-    fetch_news(analysis_news, 'วิเคราะห์เศรษฐกิจ')
+    try:
+        fetch_news(invest_news, 'การลงทุน')
+        fetch_news(policy_news, 'นโยบาย')
+        fetch_news(marketing_news, 'การตลาด')
+        fetch_news(finance_news, 'การเงิน')
+        fetch_news(analysis_news, 'วิเคราะห์เศรษฐกิจ')
+    except Exception:
+        return "something went woring"
 
 
 def fetch_news(incoming_news, type):
@@ -73,4 +67,4 @@ def fetch_news(incoming_news, type):
 
 
 if __name__ == "__main__":
-    get_content()
+    get_thairath_content()

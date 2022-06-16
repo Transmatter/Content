@@ -1,49 +1,44 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from datetime import datetime
+
+from selenium.common.exceptions import WebDriverException
+from service.forming_data_service import forming_data
 from Database.database import insert_database
 from webdriver_manager.chrome import ChromeDriverManager
 
 
 
-def forming_data():
-    url = 'https://www.sanook.com/news/entertain/'
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver.get(url)
-    html_page = BeautifulSoup(driver.page_source, 'html.parser')
-    driver.close()
-    return html_page
-
-
 def get_content():
-    html_page = forming_data()
-    ent_news = html_page.find('h2', text='อัปเดตล่าสุด').find_next('div').find_all('a')
+    html_page = forming_data('https://www.sanook.com/news/entertain/')
+    ent_news = html_page.find('h2', text='อัปเดตล่าสุด').find_next('div').find_all('a',{'class':'EntryListTitle'})
 
     # print(len(ent_news))
-    driver = webdriver.Chrome(ChromeDriverManager().install())
     for i, s in enumerate(ent_news):
-        news = {'source': 'สนุกออนไลน์', 'type': 'เอ็นเตอร์เทน', 'title': '', 'public_date': '', 'content': '',
-                'images': [],
-                'author': 'สนุกออนไลน์', 'url': '', }
-        images = {}
-        if i % 3 == 0:
-            news['url'] = s['href']
-            print(s['href'])
-            images['url']  = s.find('img')['src']
-            images['alt'] = s.find('img')['alt']
-            news['title'] = s['title']
-            news['images'].append(images)
-    # get content from main news for each url
-        driver.get(news['url'])
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        news = {'source': 'สนุกออนไลน์', 'type': 'เอ็นเตอร์เทน', 'title': s['title'], 'public_date': '', 'content': '',
+                'images': [], 'author': 'สนุกออนไลน์', 'url': s['href']}
+
+        # news['url'] = s['href']
+        # get content from main news for each url
+        try:
+            driver = webdriver.Chrome(ChromeDriverManager().install())
+            driver.get(news['url'])
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
+            driver.close()
+        except WebDriverException:
+            continue
         # print(soup.prettify())
-        t = datetime.strptime(soup.find('time')['datetime'], "%Y-%m-%d %H:%M")
-        news['public_date'] = t.strftime('%Y-%m-%d')
+        temp_time = soup.find('time')['datetime']+":00"
+        t = datetime.strptime(temp_time, "%Y-%m-%d %H:%M:%S")
+        news['public_date'] = t.strftime('%Y-%m-%d %H:%M:%S')
         contents = soup.find('div', id='EntryReader_0').find_all('p')
         contents = ''.join([c.text for c in contents])
         news['content'] = contents
+        content_image={}
+        content_image['url'] = soup.find('img')['src']
+        content_image['alt'] = ''
+        news['images'].append(content_image)
         insert_database(news)
-    driver.close()
 
 
 
