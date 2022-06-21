@@ -2,6 +2,8 @@ import pymongo
 from flask import Flask
 from flask import request
 from newsapi import NewsApiClient
+from selenium.common.exceptions import WebDriverException
+
 from Database.database import insert_database, get_database
 from flask import Response
 import Controller.Thairath as tr
@@ -19,12 +21,12 @@ def home():
 @app.route('/LocalNews')
 def fetch_local_news():  # put application's code here
     try:
-        tr.get_content()
-        dekd.get_content()
+        tr.get_thairath_content()
+        # dekd.get_content()
         sanook.get_content()
         collection = get_database()
         collection.find({}).sort("public_date" ,-1 )
-    except Exception:
+    except WebDriverException:
         return Response("{'a':'b'}", status=404, mimetype='application/json')
     return Response("{'a':'b'}", status=200, mimetype='application/json') # return http response or json {message: }
 

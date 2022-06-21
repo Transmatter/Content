@@ -20,13 +20,7 @@ def get_content():
 
         # news['url'] = s['href']
         # get content from main news for each url
-        try:
-            driver = webdriver.Chrome(ChromeDriverManager().install())
-            driver.get(news['url'])
-            soup = BeautifulSoup(driver.page_source, 'html.parser')
-            driver.close()
-        except WebDriverException:
-            continue
+        soup = forming_data(news['url'])
         # print(soup.prettify())
         temp_time = soup.find('time')['datetime']+":00"
         t = datetime.strptime(temp_time, "%Y-%m-%d %H:%M:%S")
