@@ -2,12 +2,12 @@ from flask import Flask
 from flask import request
 from newsapi import NewsApiClient
 from Database.database import insert_database, get_database
-import json
 import Controller.Thairath as tr
 import Controller.dekd as dekd
 import Controller.Sanook as sanook
-
+from flask_cors import cross_origin,CORS
 app = Flask(__name__)
+CORS(app);
 
 
 @app.route('/')
@@ -16,16 +16,18 @@ def home():
 
 
 @app.route('/LocalNews')
+@cross_origin()
 def fetch_news():  # put application's code here
-    tr.get_content()
-    dekd.get_content()
-    # sanook.get_content()
+    tr.get_thairath_content()
+    # dekd.get_content()
+    sanook.get_content()
     collection = get_database()
     collection.find().sort('public_date',-1)
     return 'news have been store in database'  # return http response or json {message: }
 
 
 @app.route('/InterNews', methods=['GET'])
+@cross_origin()
 def fetch_inter_news():
     topic = request.args.get('topic')
     time = request.args.get('time')
