@@ -35,6 +35,7 @@ def fetch_news(incoming_news, type):
         print(news['url'])
         images['url'] = s.find('img')['src']
         images['alt'] = s.find('img')['alt']
+        images['status'] = "INCOMPLETE" if len(images['alt']) >0 else "EMPTY"
         news['title'] = s.find('img')['alt']
         news['images'].append(images)
         # get content from main news for each url
@@ -50,7 +51,11 @@ def fetch_news(incoming_news, type):
         picture = soup.find_all('picture')
         if picture is not None:
             for temp_pic in picture:
-                temp = {'url': temp_pic.find('img')['src'], 'ait': ''}
+                status = "EMPTY"
+                if len(temp_pic.find('img')['alt']) >0:
+                    status = "INCOMPLETE"
+                temp = {'url': temp_pic.find('img')['src'], 'alt': temp_pic.find('img')['alt'] , 'status': status}
+                print(temp)
                 news['images'].append(temp)
         #add to database
         insert_database(news)

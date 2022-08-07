@@ -31,6 +31,7 @@ def get_content():
         content_image={}
         content_image['url'] = soup.find('img')['src']
         content_image['alt'] = ''
+        content_image['status'] = 'EMPTY'
         news['images'].append(content_image)
         insert_database(news)
 
