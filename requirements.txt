@@ -1,0 +1,12 @@
+flask
+newsapi-python
+flask_cors
+pythainlp
+numpy
+gensim
+scikit-learn
+joblib
+bs4
+pymongo
+selenium
+webdriver_manager
