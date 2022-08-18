@@ -10,7 +10,7 @@ import service.spell_correction as sc
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app);
-
+model = sc.train_model()
 
 @app.route('/')
 def home():
@@ -48,12 +48,14 @@ def fetch_inter_news():
     print(articles)
     for article in articles:
 
-        news_format = {'source': article['source']['name'], 'type': 'random ', 'title': article['title'],
-                       'public_date': article['publishedAt'], 'content': article['content'],
-                       'images': [{'alt':'','url':article['urlToImage'], 'status':'empty'}],
-                       'author': article['author'], 'url': article['url']}
+        news_format = {'source': article['source']['name'], 'category': 'random ', 'title': article['title'],
+                       'publicDate': article['publishedAt'], 'content': article['content'],
+                       'images': [{'alt':'','url':article['urlToImage'], 'verifyStatus':"EMPTY", 'verifiedBy':'','verifiedDate':''}],
+                       'author': article['author'], 'url': article['url']
+                       ,"approveStatus":"NOT_APPROVE", 'approvedBy':'', 'approvedDate':'', 'type':'INTER_CONTENT'
+                       }
 
-        date = news_format["public_date"]
+        date = news_format["publicDate"]
         time = ''
         i = 0
         for d in date:
@@ -62,10 +64,10 @@ def fetch_inter_news():
             elif i == 0:
                 time += ' '
                 i = 1
-        news_format["public_date"] = time
+        news_format["publicDate"] = time
         insert_database(news_format)
     collection = get_database()
-    collection.find().sort('public_date', -1)
+    collection.find().sort('publicDate', -1)
     # return http response or json {message: }
     return 'added news successfully'# return http response or json {message: }
 
@@ -74,7 +76,7 @@ def fetch_inter_news():
 def spell_check():
     args = request.args
     keyword = args.get('keyword')
-    return make_response(sc.check_spell_correction(keyword))
+    return make_response(sc.check_spell_correction(model,keyword))
 
 if __name__ == '__main__':
     app.run()

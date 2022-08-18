@@ -4,7 +4,8 @@ import fasttext
 from sklearn.neighbors import NearestNeighbors
 import joblib
 
-def check_spell_correction(keyword):
+
+def train_model():
     words = thai_words()
     words = np.array(list(words))
     words_str = '\n'.join(words)
@@ -22,9 +23,12 @@ def check_spell_correction(keyword):
     joblib.dump(words, 'words.joblib')
     joblib.dump(nbrs, 'nbrs.joblib');
     model = fasttext.load_model('char2vec.bin')
+    return model
+
+
+def check_spell_correction(model, keyword):
     words = joblib.load('words.joblib')
     nbrs = joblib.load('nbrs.joblib')
-
     # words set with random mistake
 
     words_input = [keyword]
@@ -37,11 +41,12 @@ def check_spell_correction(keyword):
     for i, word in enumerate(words_input):
         if word != suggestion[i][0]:
             give_suggestion.append(np.array(suggestion[i]).tolist())
-    if len(give_suggestion)!=0:
-        return {'suggestion':give_suggestion[0]}
+    if len(give_suggestion) != 0:
+        return {'suggestion': give_suggestion[0]}
     else:
-        return {'suggestion':keyword}
+        return {'suggestion': None}
+
 
 
 if __name__ == '__main__':
-    print(check_spell_correction('ราคาา'))
+    print(check_spell_correction(model, 'ราคาา'))

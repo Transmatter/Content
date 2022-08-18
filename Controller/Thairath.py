@@ -25,9 +25,9 @@ def get_thairath_content():
 
 def fetch_news(incoming_news, type):
     for i, s in enumerate(incoming_news):
-        news = {'source': 'ไทยรัฐออนไลน์', 'type': type, 'title': '', 'public_date': '', 'content': '',
+        news = {'source': 'ไทยรัฐออนไลน์', 'category': type, 'title': '', 'publicDate': '', 'content': '',
                 'images': [],
-                'author': 'ไทยรัฐออนไลน์', 'url': '', }
+                'author': 'ไทยรัฐออนไลน์', 'url': '',"approveStatus":"NOT_APPROVE","approvedBy":None , 'approvedDate':'', 'type':'LOCAL_CONTENT' }
         images = {}
         if i % 2 == 1:
             continue
@@ -35,14 +35,16 @@ def fetch_news(incoming_news, type):
         print(news['url'])
         images['url'] = s.find('img')['src']
         images['alt'] = s.find('img')['alt']
-        images['status'] = "INCOMPLETE" if len(images['alt']) >0 else "EMPTY"
+        images['verifyStatus'] = "INCOMPLETE" if len(images['alt']) >0 else "EMPTY"
+        images['verifiedDate'] = ''
+        images['verifiedBy'] = None
         news['title'] = s.find('img')['alt']
         news['images'].append(images)
         # get content from main news for each url
         soup = forming_data(news['url'])
         # print(soup.prettify())
         t = datetime.strptime(soup.find('meta', property='article:published_time')['content'][:-6], '%Y-%m-%dT%H:%M:%S')
-        news['public_date'] = (t.strftime('%Y-%m-%d %H:%M:%S'))
+        news['publicDate'] = (t.strftime('%Y-%m-%d %H:%M:%S'))
         contents = soup.find('article', id='article-content').find_all('p')
         contents = ''.join([c.text for c in contents])
         news['content'] = contents
@@ -54,7 +56,8 @@ def fetch_news(incoming_news, type):
                 status = "EMPTY"
                 if len(temp_pic.find('img')['alt']) >0:
                     status = "INCOMPLETE"
-                temp = {'url': temp_pic.find('img')['src'], 'alt': temp_pic.find('img')['alt'] , 'status': status}
+                temp = {'url': temp_pic.find('img')['src'], 'alt': temp_pic.find('img')['alt'] , 'verifyStatus': status,
+                        'verifyBy':None, 'verifiedDate':''}
                 print(temp)
                 news['images'].append(temp)
         #add to database
