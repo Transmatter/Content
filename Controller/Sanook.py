@@ -15,8 +15,8 @@ def get_content():
 
     # print(len(ent_news))
     for i, s in enumerate(ent_news):
-        news = {'source': 'สนุกออนไลน์', 'type': 'เอ็นเตอร์เทน', 'title': s['title'], 'public_date': '', 'content': '',
-                'images': [], 'author': 'สนุกออนไลน์', 'url': s['href']}
+        news = {'source': 'สนุกออนไลน์', 'category': 'เอ็นเตอร์เทน', 'title': s['title'], 'publicDate': '', 'content': '',
+                'images': [], 'author': 'สนุกออนไลน์', 'url': s['href'], "approvedBy":None,"approveStatus":"NOT_APPROVE", 'approvedDate':'', 'type':'LOCAL_CONTENT'}
 
         # news['url'] = s['href']
         # get content from main news for each url
@@ -24,13 +24,16 @@ def get_content():
         # print(soup.prettify())
         temp_time = soup.find('time')['datetime']+":00"
         t = datetime.strptime(temp_time, "%Y-%m-%d %H:%M:%S")
-        news['public_date'] = t.strftime('%Y-%m-%d %H:%M:%S')
+        news['publicDate'] = t.strftime('%Y-%m-%d %H:%M:%S')
         contents = soup.find('div', id='EntryReader_0').find_all('p')
         contents = ''.join([c.text for c in contents])
         news['content'] = contents
         content_image={}
         content_image['url'] = soup.find('img')['src']
         content_image['alt'] = ''
+        content_image['verifyStatus'] = 'EMPTY'
+        content_image['verifiedDate'] = ''
+        content_image['verifiedBy'] = None
         news['images'].append(content_image)
         insert_database(news)
 
