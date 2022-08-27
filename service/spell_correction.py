@@ -21,7 +21,7 @@ def train_model():
     X, y = words_vec, words
     nbrs = NearestNeighbors().fit(X, y)
     joblib.dump(words, 'words.joblib')
-    joblib.dump(nbrs, 'nbrs.joblib');
+    joblib.dump(nbrs, 'nbrs.joblib')
     model = fasttext.load_model('char2vec.bin')
     return model
 
@@ -47,6 +47,6 @@ def check_spell_correction(model, keyword):
         return {'suggestion': None}
 
 
-
-if __name__ == '__main__':
-    print(check_spell_correction(model, 'ราคาา'))
+#
+# if __name__ == '__main__':
+#     print(check_spell_correction(model, 'ราคาา'))
