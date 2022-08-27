@@ -10,7 +10,7 @@ import service.spell_correction as sc
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app)
-# model = sc.train_model()
+model = sc.train_model()
 
 @app.route('/')
 def home():
@@ -71,12 +71,12 @@ def fetch_inter_news():
     # return http response or json {message: }
     return 'added news successfully'# return http response or json {message: }
 
-# @app.route('/spellcheck', methods=['GET'])
-# @cross_origin()
-# def spell_check():
-#     args = request.args
-#     keyword = args.get('keyword')
-#     return make_response(sc.check_spell_correction(model,keyword))
+@app.route('/spellcheck', methods=['GET'])
+@cross_origin()
+def spell_check():
+    args = request.args
+    keyword = args.get('keyword')
+    return make_response(sc.check_spell_correction(model,keyword))
 
 if __name__ == '__main__':
     app.run()
