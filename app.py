@@ -9,7 +9,7 @@ from flask_cors import cross_origin,CORS
 import service.spell_correction as sc
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-CORS(app);
+CORS(app)
 model = sc.train_model()
 
 @app.route('/')

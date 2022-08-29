@@ -7,3 +7,7 @@ fastText/
 *.pyo
 *.py[cod]
 *$py.class
+resource
+*.bin
+*.joblib
+words-char.txt

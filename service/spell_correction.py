@@ -6,24 +6,24 @@ import joblib
 
 
 def train_model():
-    words = thai_words()
-    words = np.array(list(words))
-    words_str = '\n'.join(words)
-    words_char = list(words_str)
-    with open('words-char.txt', mode='w', encoding='utf-8') as file:
-        file.write(' '.join(words_char))
-    model = fasttext.train_unsupervised('words-char.txt',
-                                        epoch=200,
-                                        ws=4)
-    words_vec = [model.get_sentence_vector(' '.join(list(word))) for word in words]
-    words_vec = np.array(words_vec)
-    model.save_model('char2vec.bin')  # Model from fastText
-    X, y = words_vec, words
-    nbrs = NearestNeighbors().fit(X, y)
-    joblib.dump(words, 'words.joblib')
-    joblib.dump(nbrs, 'nbrs.joblib');
-    model = fasttext.load_model('char2vec.bin')
-    return model
+    # words = thai_words()
+    # words = np.array(list(words))
+    # words_str = '\n'.join(words)
+    # words_char = list(words_str)
+    # with open('words-char.txt', mode='w', encoding='utf-8') as file:
+    #     file.write(' '.join(words_char))
+    # model = fasttext.train_unsupervised('words-char.txt',
+    #                                     epoch=200,
+    #                                     ws=4)
+    # words_vec = [model.get_sentence_vector(' '.join(list(word))) for word in words]
+    # words_vec = np.array(words_vec)
+    # model.save_model('char2vec.bin')  # Model from fastText
+    # X, y = words_vec, words
+    # nbrs = NearestNeighbors().fit(X, y)
+    # joblib.dump(words, 'words.joblib')
+    # joblib.dump(nbrs, 'nbrs.joblib')
+    # model = fasttext.load_model('char2vec.bin')
+    return fasttext.load_model('char2vec.bin')
 
 
 def check_spell_correction(model, keyword):
@@ -47,6 +47,6 @@ def check_spell_correction(model, keyword):
         return {'suggestion': None}
 
 
-
-if __name__ == '__main__':
-    print(check_spell_correction(model, 'ราคาา'))
+#
+# if __name__ == '__main__':
+#     print(check_spell_correction(model, 'ราคาา'))
