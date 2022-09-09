@@ -1,0 +1,13 @@
+.idea/
+venv/
+build/
+dist/
+fastText/
+*.pyc
+*.pyo
+*.py[cod]
+*$py.class
+resource
+*.bin
+*.joblib
+words-char.txt
